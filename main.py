@@ -1,23 +1,22 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
 from optimizador import optimizar_portafolio
+from typing import Optional
 
 app = FastAPI()
 
-class OptimInput(BaseModel):
-    activos: list[str]
-    capital: float
-    horizonte: int
-    metodo: str
-    peso_max: float
+@app.get("/")
+def root():
+    return {"message": "Portfolio backend online ✅"}
 
 @app.post("/optimizar")
-def optimizar(data: OptimInput):
-    resultado = optimizar_portafolio(
-        activos=data.activos,
-        capital=data.capital,
-        horizonte=data.horizonte,
-        metodo=data.metodo,
-        peso_max=data.peso_max
+def optimizar(data: dict):
+    return optimizar_portafolio(
+        activos=data["activos"],
+        capital=data["capital"],
+        horizonte=data["horizonte"],
+        metodo=data["metodo"],
+        peso_max=data.get("peso_max", 1.0),
+        pesos_manual=data.get("pesos_manual")
     )
     return resultado
